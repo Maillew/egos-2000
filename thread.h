@@ -1,22 +1,36 @@
 /* Student's code goes here (Cooperative Threads). */
 enum thread_status {
 	THREAD_RUNNING,
+    THREAD_READY,
+    THREAD_BLOCKED,
+    THREAD_ZOMBIE
     /* Define the various possible status of a thread. */
-
 };
 
-struct thread {
+typedef struct Thread {
     int id;
     void* sp;
+    void* stack_bottom;
     enum thread_status status;
-    /* Define the data structure for thread control block. */
+    void (*function_pointer)(void* args); // for posix thread, should be (void*)
+    void* args; // pointer to the arguments
+} Thread;
+/* Define the data structure for thread control block. */
+int current_thread_id = 0;
+int next_thread_id = 1;
+#define NUM_THREADS 2048
+Thread TCB[NUM_THREADS]; // bruh in C, have to declare like this, otherwise wont recognize
 
-};
+typedef struct LLNode{
+    Thread* thread;
+    struct LLNode* next;
+} LLNode;
 
-struct cv {
-    /* Define the data structure for conditional variables. */
-
-};
+//should be dynamically allocated? when do we free then hmm
+typedef struct cv {
+    LLNode* head;
+    LLNode* tail;
+} cv;
 /* Student's code ends here. */
 
 /* Every thread created by thread_create() has a 1KB stack.
